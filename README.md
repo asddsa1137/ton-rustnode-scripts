@@ -54,6 +54,13 @@ Node binary will be saved to `rustnet.ton.dev/bin` directory.
 Tools like `tonos-cli` will be saved to `rustnet.ton.dev/tools`.
 Working directory is `/var/ton-node`.
 
+# Update node
+```
+cd rustnet.ton.dev/scripts
+./build.sh
+systemctl restart ton-rust-node.service
+```
+
 # Known issues
 
 1. Validator scripts are currently unsupported. 
