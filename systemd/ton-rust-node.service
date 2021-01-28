@@ -4,7 +4,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/systemd/system/ton-rust-node2.env
+EnvironmentFile=/etc/systemd/system/ton-rust-node.env
 Type=simple
 User=USER
 Group=GROUP
