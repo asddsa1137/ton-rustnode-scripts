@@ -2,6 +2,8 @@
 
 This scripts allow to build and run Free TON Rust node on baremetal host and offers systemd installation.
 
+Tested on Ubuntu 20.04
+
 # Getting Started
 
 ## 1. Clone TON Labs rustnet repo
