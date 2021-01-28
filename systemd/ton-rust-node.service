@@ -1,0 +1,20 @@
+[Unit]
+Description=ton rust node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/systemd/system/ton-rust-node2.env
+Type=simple
+User=USER
+Group=GROUP
+WorkingDirectory=ROOT
+ExecStart=BIN --configs CONFIGS 
+StandardOutput=file:LOG
+StandardError=file:LOG
+Restart=always
+RestartSec=3
+LimitNOFILE=240000
+
+[Install]
+WantedBy=multi-user.target
