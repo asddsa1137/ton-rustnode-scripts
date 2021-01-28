@@ -51,3 +51,9 @@ By default build will be performed under `rustnet.ton.dev/build` directory.
 Node binary will be saved to `rustnet.ton.dev/bin` directory.
 Tools like `tonos-cli` will be saved to `rustnet.ton.dev/tools`.
 Working directory is `/var/ton-node`.
+
+# Known issues
+
+1. Validator scripts are currently unsupported. 
+
+2. Scripts are leaving some trash in random directories. 
