@@ -1,6 +1,5 @@
 #!/bin/bash -eE
 
-TON_WORK_DIR="/var/ton-node"
 RNODE_CONSOLE_SERVER_PORT="3031"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
@@ -57,6 +56,8 @@ sudo chown "${SETUP_USER}:${SETUP_GROUP}" "${TON_WORK_DIR}"
 mkdir "${TON_WORK_DIR}/logs"
 
 cp -r "${SCRIPT_DIR}/configs" "${TON_WORK_DIR}"
+mkdir -p "${TON_WORK_DIR}/configs/keys"
+
 sed -i "s@/ton-node@${TON_WORK_DIR}@g" "${TON_WORK_DIR}/configs/log_cfg.yml"
 
 "${TOOLS_DIR}/keygen" > "${TON_WORK_DIR}/configs/${HOSTNAME}_console_client_keys.json"
