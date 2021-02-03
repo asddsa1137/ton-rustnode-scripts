@@ -46,10 +46,6 @@ fi
 SETUP_USER="$(id --user)"
 SETUP_GROUP="$(id --group)"
 
-NODE_BUILD_DIR="${SRC_TOP_DIR}/build"
-TOOLS_BUILD_DIR="${SRC_TOP_DIR}/build/ton-node/ton-labs-node-tools"
-TONOS_CLI_BUILD_DIR="${SRC_TOP_DIR}/build/tonos-cli"
-
 BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
@@ -57,12 +53,6 @@ sudo rm -rf "${TON_WORK_DIR}"
 
 sudo mkdir -p "${TON_WORK_DIR}"
 sudo chown "${SETUP_USER}:${SETUP_GROUP}" "${TON_WORK_DIR}"
-mkdir -p "${BIN_DIR}" "${TOOLS_DIR}"
-
-cp "${NODE_BUILD_DIR}/ton-node/target/release/ton_node" "${BIN_DIR}"
-cp "${NODE_BUILD_DIR}/ton-node/ton-labs-node-tools/target/release/console" "${TOOLS_DIR}"
-cp "${NODE_BUILD_DIR}/ton-node/ton-labs-node-tools/target/release/keygen" "${TOOLS_DIR}"
-cp "${NODE_BUILD_DIR}/tonos-cli/target/release/tonos-cli" "${TOOLS_DIR}"
 
 mkdir "${TON_WORK_DIR}/logs"
 
