@@ -2,6 +2,8 @@
 
 This scripts allow to build and run Free TON Rust node on baremetal host and offers systemd installation.
 
+Tested on Ubuntu 20.04
+
 # Getting Started
 
 ## 1. Clone TON Labs rustnet repo
@@ -51,3 +53,16 @@ By default build will be performed under `rustnet.ton.dev/build` directory.
 Node binary will be saved to `rustnet.ton.dev/bin` directory.
 Tools like `tonos-cli` will be saved to `rustnet.ton.dev/tools`.
 Working directory is `/var/ton-node`.
+
+# Update node
+```
+cd rustnet.ton.dev/scripts
+./build.sh
+systemctl restart ton-rust-node.service
+```
+
+# Known issues
+
+1. Validator scripts are currently unsupported. 
+
+2. Scripts are leaving some trash in random directories. 
