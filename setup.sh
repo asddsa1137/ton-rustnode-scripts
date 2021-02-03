@@ -1,6 +1,7 @@
 #!/bin/bash -eE
 
 TON_WORK_DIR="/var/ton-node"
+RNODE_CONSOLE_SERVER_PORT="3031"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 # shellcheck source=env.sh
@@ -35,7 +36,7 @@ echo "INFO: setup Free TON node dependencies... DONE"
 echo "INFO: setup Free TON node..."
 
 echo
-read -p "This script will REMOVE your previous ton-node installation. \nAre you sure? (Y/N)" -n 1 -r
+read -p "This script will REMOVE your previous ton-node installation. Are you sure? (Y/N)" -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
@@ -71,7 +72,7 @@ sed -i "s@/ton-node@${TON_WORK_DIR}@g" "${TON_WORK_DIR}/configs/log_cfg.yml"
 "${TOOLS_DIR}/keygen" > "${TON_WORK_DIR}/configs/${HOSTNAME}_console_client_keys.json"
 jq -c .public "${TON_WORK_DIR}/configs/${HOSTNAME}_console_client_keys.json" > "${TON_WORK_DIR}/configs/console_client_public.json"
 
-jq ".control_server_ip_port = \"${RNODE_CONSOLE_SERVER_PORT}\"" "${TON_WORK_DIR}/configs/default_config.json" > "${TMP_DIR}/default_config.json.tmp"
+jq ".control_server_port = ${RNODE_CONSOLE_SERVER_PORT}" "${TON_WORK_DIR}/configs/default_config.json" > "${TMP_DIR}/default_config.json.tmp"
 cp "${TMP_DIR}/default_config.json.tmp" "${TON_WORK_DIR}/configs/default_config.json"
 
 # Generate initial config.json
