@@ -90,5 +90,6 @@ fi
 echo "INFO: build utils (tonos-cli)... DONE"
 
 echo "INFO: pull TON Labs contracts..."
+rm -rf "${SRC_TOP_DIR}/ton-labs-contracts"
 git clone https://github.com/tonlabs/ton-labs-contracts.git "${SRC_TOP_DIR}/ton-labs-contracts"
 echo "INFO: pull TON Labs contracts... DONE"
