@@ -6,6 +6,12 @@ Tested on Ubuntu 20.04
 
 # Getting Started
 
+## 0. Initialize environment. 
+
+```
+. ./env.sh
+```
+
 ## 1. Clone TON Labs rustnet repo
 
 ```
