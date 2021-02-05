@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-DEBUG=yes
+DEBUG=no
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 # shellcheck source=env.sh
