@@ -45,6 +45,10 @@ echo "INFO: MSIG_ADDR = ${MSIG_ADDR}"
 echo "INFO: DEPOOL_ADDR = ${DEPOOL_ADDR}"
 
 ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli run ${ELECTOR_ADDR} active_election_id {} --abi ${CONFIGS_DIR}/Elector.abi.json 2>&1 | grep "value0" | awk '{print $2}' | tr -d '"')
+if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
+	echo "ERROR: failed to get active elections ID"
+        exit 1
+fi
 ACTIVE_ELECTION_ID=$(printf "%d" "${ACTIVE_ELECTION_ID_HEX}")
 echo "INFO: ACTIVE_ELECTION_ID = ${ACTIVE_ELECTION_ID}"
 
@@ -82,7 +86,8 @@ ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT=$(grep "^{" "${ELECTIONS_WORK_DIR}/events.t
     jq ".electionId" | head -1 | tr -d '"' | xargs printf "%d\n")
 echo "INFO: ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT = ${ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT}"
 
-if [ "${ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT}" = "${ACTIVE_ELECTION_ID}" ]; then
+ACTIVE_ELECTION_ID_TIME_DIFF=$(($ACTIVE_ELECTION_ID - $ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT))
+if [ $ACTIVE_ELECTION_ID_TIME_DIFF -lt 1000 ]; then
     PROXY_ADDR_FROM_DEPOOL_EVENT=$(grep "^{" "${ELECTIONS_WORK_DIR}/events.txt" | grep electionId |
         jq ".proxy" | head -1 | tr -d '"')
     echo "INFO: PROXY_ADDR_FROM_DEPOOL_EVENT = ${PROXY_ADDR_FROM_DEPOOL_EVENT}"
@@ -115,7 +120,7 @@ set -eE
 
 ELECTIONS_ARTEFACTS_CREATED="0"
 if [ -f "${ELECTIONS_WORK_DIR}/election-artefacts-created" ] &&
-    [ "${ACTIVE_ELECTION_ID}" = "$(cat "${ELECTIONS_WORK_DIR}/election-artefacts-created")" ]; then
+    [ "${ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT}" = "$(cat "${ELECTIONS_WORK_DIR}/election-artefacts-created")" ]; then
     ELECTIONS_ARTEFACTS_CREATED="1"
 fi
 
@@ -130,13 +135,15 @@ if [ "${ELECTIONS_ARTEFACTS_CREATED}" = "0" ]; then
    echo "INFO: STAKE_HELD_FOR = ${STAKE_HELD_FOR}"
    echo "INFO: VALIDATORS_ELECTED_FOR = ${VALIDATORS_ELECTED_FOR}"
 
-   ELECTION_START="${ACTIVE_ELECTION_ID}"
+   ELECTION_START="${ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT}"
    # TODO: duration may be reduced - to be checked
-   ELECTION_STOP=$((ACTIVE_ELECTION_ID + 1000 + ELECTIONS_START_BEFORE + ELECTIONS_END_BEFORE + STAKE_HELD_FOR + VALIDATORS_ELECTED_FOR))
-   ${UTILS_DIR}/console -C ${CONFIGS_DIR}/console.json -c "election-bid ${ELECTION_START} ${ELECTION_STOP}"
+   ELECTION_STOP=$((ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT + 1000 + ELECTIONS_START_BEFORE + ELECTIONS_END_BEFORE + STAKE_HELD_FOR + VALIDATORS_ELECTED_FOR))
+
+   jq ".wallet_id = \"${VALIDATOR_MSIG_ADDR}\"" ${CONFIGS_DIR}/console.json >"${TMP_DIR}/console.json"
+   ${UTILS_DIR}/console -C ${TMP_DIR}/console.json -c "election-bid ${ELECTION_START} ${ELECTION_STOP}"
    mv validator-query.boc "${ELECTIONS_WORK_DIR}"
 
-   echo "${ACTIVE_ELECTION_ID}" >"${ELECTIONS_WORK_DIR}/election-artefacts-created"
+   echo "${ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT}" >"${ELECTIONS_WORK_DIR}/election-artefacts-created"
 
 else
        echo "WARNING: election artefacts already created"

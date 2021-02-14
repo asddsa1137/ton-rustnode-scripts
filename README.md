@@ -77,6 +77,7 @@ By default build will be performed under `rustnet.ton.dev/build` directory.
 Node binary will be saved to `rustnet.ton.dev/bin` directory.
 Tools like `tonos-cli` will be saved to `rustnet.ton.dev/tools`.
 Working directory is `/var/ton-node`.
+Keys are stored at $HOME/keys and also created as a symlink at /var/ton-node/config/keys
 
 # Update node
 ```

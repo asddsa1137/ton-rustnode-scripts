@@ -56,7 +56,9 @@ sudo chown "${SETUP_USER}:${SETUP_GROUP}" "${TON_WORK_DIR}"
 mkdir "${TON_WORK_DIR}/logs"
 
 cp -r "${SCRIPT_DIR}/configs" "${TON_WORK_DIR}"
-mkdir -p "${TON_WORK_DIR}/configs/keys"
+
+mkdir -p "${HOME}/keys"
+ln -s "${HOME}/keys" "${TON_WORK_DIR}/configs/keys"
 
 sed -i "s@/ton-node@${TON_WORK_DIR}@g" "${TON_WORK_DIR}/configs/log_cfg.yml"
 
