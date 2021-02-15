@@ -67,7 +67,7 @@ init_env() {
         CONFIGS_DIR="${TON_NODE_ROOT}/configs"
         KEYS_DIR="${CONFIGS_DIR}/keys"
         WORK_DIR="${UTILS_DIR}"
-        MSIG_ADDR_FILE="${CONFIGS_DIR}/${VALIDATOR_NAME}.addr"
+        MSIG_ADDR_FILE="${KEYS_DIR}/${VALIDATOR_NAME}.addr"
     else
         UTILS_DIR="/utils"
         KEYS_DIR="/keys"
