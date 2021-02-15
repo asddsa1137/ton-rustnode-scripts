@@ -21,9 +21,9 @@ WORK_DIR="${UTILS_DIR}"
 MAX_FACTOR=${MAX_FACTOR:-3}
 TONOS_CLI_SEND_ATTEMPTS="10"
 ELECTOR_ADDR="-1:3333333333333333333333333333333333333333333333333333333333333333"
-MSIG_ADDR_FILE="${CONFIGS_DIR}/${VALIDATOR_NAME}.addr"
-DEPOOL_ADDR_FILE="${CONFIGS_DIR}/depool.addr"
-HELPER_ADDR_FILE="${CONFIGS_DIR}/helper.addr"
+MSIG_ADDR_FILE="${KEYS_DIR}/${VALIDATOR_NAME}.addr"
+DEPOOL_ADDR_FILE="${KEYS_DIR}/depool.addr"
+HELPER_ADDR_FILE="${KEYS_DIR}/helper.addr"
 
 if [ ! -f "${MSIG_ADDR_FILE}" ]; then
     echo "ERROR: ${MSIG_ADDR_FILE} does not exist"
@@ -35,10 +35,10 @@ if [ ! -f "${DEPOOL_ADDR_FILE}" ]; then
     echo "ERROR: "${DEPOOL_ADDR_FILE}" does not exist"
     exit 1
 fi
-DEPOOL_ADDR=$(cat "${CONFIGS_DIR}/depool.addr")
+DEPOOL_ADDR=$(cat "${DEPOOL_ADDR_FILE}")
 
 if [ -f "${HELPER_ADDR_FILE}" ]; then
-    HELPER_ADDR=$(cat "${CONFIGS_DIR}/helper.addr")
+    HELPER_ADDR=$(cat "${HELPER_ADDR_FILE}")
 fi
 
 echo "INFO: MSIG_ADDR = ${MSIG_ADDR}"
@@ -46,7 +46,7 @@ echo "INFO: DEPOOL_ADDR = ${DEPOOL_ADDR}"
 
 ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli run ${ELECTOR_ADDR} active_election_id {} --abi ${CONFIGS_DIR}/Elector.abi.json 2>&1 | grep "value0" | awk '{print $2}' | tr -d '"')
 if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
-	echo "ERROR: failed to get active elections ID"
+   	echo "ERROR: failed to get active elections ID"
         exit 1
 fi
 ACTIVE_ELECTION_ID=$(printf "%d" "${ACTIVE_ELECTION_ID_HEX}")
