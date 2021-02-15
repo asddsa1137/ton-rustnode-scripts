@@ -32,7 +32,7 @@ sudo apt update && sudo apt install -y \
     librdkafka-dev
 
 cp $SCRIPT_DIR/rust_install.sh $TMP_DIR
-cd $TMP_DIR && sudo ./rust_install.sh 1.50.0
+cd $TMP_DIR && sudo ./rust_install.sh 1.49.0
 
 rm -rf "${NODE_BUILD_DIR}"
 

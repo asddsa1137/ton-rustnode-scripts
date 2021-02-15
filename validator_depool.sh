@@ -12,6 +12,10 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 # shellcheck source=env.sh
 . "${SCRIPT_DIR}/env.sh"
 
+TMP_DIR=/tmp/$(basename "$0" .sh)_$$
+rm -rf "${TMP_DIR}"
+mkdir -p "${TMP_DIR}"
+
 CONTRACTS_DIR="${SRC_TOP_DIR}/ton-labs-contracts/solidity"
 TON_NODE_ROOT="${TON_WORK_DIR}"
 CONFIGS_DIR="${TON_NODE_ROOT}/configs"
@@ -139,7 +143,7 @@ if [ "${ELECTIONS_ARTEFACTS_CREATED}" = "0" ]; then
    # TODO: duration may be reduced - to be checked
    ELECTION_STOP=$((ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT + 1000 + ELECTIONS_START_BEFORE + ELECTIONS_END_BEFORE + STAKE_HELD_FOR + VALIDATORS_ELECTED_FOR))
 
-   jq ".wallet_id = \"${VALIDATOR_MSIG_ADDR}\"" ${CONFIGS_DIR}/console.json >"${TMP_DIR}/console.json"
+   jq ".wallet_id = \"${PROXY_ADDR_FROM_DEPOOL_EVENT}\"" ${CONFIGS_DIR}/console.json >"${TMP_DIR}/console.json"
    ${UTILS_DIR}/console -C ${TMP_DIR}/console.json -c "election-bid ${ELECTION_START} ${ELECTION_STOP}"
    mv validator-query.boc "${ELECTIONS_WORK_DIR}"
 
@@ -185,4 +189,5 @@ fi
 date +"INFO: %F %T prepared for elections"
 echo "${ACTIVE_ELECTION_ID}" >"${ELECTIONS_WORK_DIR}/active-election-id-submitted"
 
+rm -rf "${TMP_DIR}"
 echo "INFO: $(basename "$0") END $(date +%s) / $(date)"
