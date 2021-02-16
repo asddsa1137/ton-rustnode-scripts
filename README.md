@@ -6,16 +6,16 @@ Tested on Ubuntu 20.04
 
 # Getting Started
 
-## 0. Initialize environment. 
-
-```
-. ./env.sh
-```
-
-## 1. Clone TON Labs rustnet repo
+## 0. Clone TON Labs rustnet repo
 
 ```
 git clone https://github.com/tonlabs/rustnet.ton.dev.git
+```
+
+## 1. Initialize environment. 
+
+```
+. ./env.sh
 ```
 
 ## 2. Clone this repo
@@ -53,6 +53,17 @@ cd ../rustnet.ton.dev/scripts/
 systemctl start ton-rust-node.service
 ```
 
+## Wait for node sync
+
+First of all check service status with `systemctl status ton-rust-node.service` and node logs at `/var/ton-node/logs/output.log`. If everything up and running, sit back and relax.
+
+You can check sync status with
+```
+./check_node_sync_status.sh
+```
+If service is up and running but you receive `connection refused` error, wait a bit more. Node does not opens console port during boot. 
+If you see `timediff` less then several seconds, your node had successfully synced. 
+
 ## 8. Validate
 
 ### Validate using msig wallet (single stake)
@@ -85,7 +96,3 @@ cd rustnet.ton.dev/scripts
 ./build.sh
 systemctl restart ton-rust-node.service
 ```
-
-# Known issues
-
-1. Scripts are leaving some trash in random directories. 
