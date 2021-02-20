@@ -15,6 +15,8 @@ TONOS_CLI_BUILD_DIR="${SRC_TOP_DIR}/build/tonos-cli"
 BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
+RUST_VERSTION="1.49.0"
+
 sudo apt update && sudo apt install -y \
     gpg \
     tar \
@@ -31,8 +33,15 @@ sudo apt update && sudo apt install -y \
     gnupg2 \
     librdkafka-dev
 
-cp $SCRIPT_DIR/rust_install.sh $TMP_DIR
-cd $TMP_DIR && sudo ./rust_install.sh 1.49.0
+if command -v rustc &> /dev/null ; then
+  INSTELLED_RUST_VERSION=$(rustc --version |awk '{print $2}')
+fi
+
+
+if [ "${INSTELLED_RUST_VERSION}" !=  "${RUST_VERSTION}" ]; then
+  cp $SCRIPT_DIR/rust_install.sh $TMP_DIR
+  cd $TMP_DIR && sudo ./rust_install.sh 1.49.0
+fi
 
 rm -rf "${NODE_BUILD_DIR}"
 
