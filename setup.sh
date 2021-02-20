@@ -67,6 +67,7 @@ jq -c .public "${TON_WORK_DIR}/configs/${HOSTNAME}_console_client_keys.json" > "
 
 jq ".control_server_port = ${RNODE_CONSOLE_SERVER_PORT}" "${TON_WORK_DIR}/configs/default_config.json" > "${TMP_DIR}/default_config.json.tmp"
 cp "${TMP_DIR}/default_config.json.tmp" "${TON_WORK_DIR}/configs/default_config.json"
+cp "${SRC_TOP_DIR}/ton-labs-contracts/solidity/safemultisig/SafeMultisigWallet.abi.json" "${TON_WORK_DIR}/configs/"
 
 # Generate initial config.json
 
