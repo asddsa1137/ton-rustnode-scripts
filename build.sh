@@ -34,11 +34,11 @@ sudo apt update && sudo apt install -y \
     librdkafka-dev
 
 if command -v rustc &> /dev/null ; then
-  INSTELLED_RUST_VERSION=$(rustc --version |awk '{print $2}')
+  INSTALLED_RUST_VERSION=$(rustc --version |awk '{print $2}')
 fi
 
 
-if [ "${INSTELLED_RUST_VERSION}" !=  "${RUST_VERSTION}" ]; then
+if [ "${INSTALLED_RUST_VERSION}" !=  "${RUST_VERSTION}" ]; then
   cp $SCRIPT_DIR/rust_install.sh $TMP_DIR
   cd $TMP_DIR && sudo ./rust_install.sh 1.49.0
 fi
