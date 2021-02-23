@@ -15,7 +15,9 @@ git clone https://github.com/tonlabs/rustnet.ton.dev.git
 ## 1. Initialize environment. 
 
 ```
+cd rustnet.ton.dev.git/scripts
 . ./env.sh
+cd -
 ```
 
 ## 2. Clone this repo
