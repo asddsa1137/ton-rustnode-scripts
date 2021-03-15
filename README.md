@@ -40,6 +40,7 @@ cd ../rustnet.ton.dev/scripts/
 ```
 ./setup.sh
 ```
+*In case on network wipe just re-run setup script.* 
 
 ## 6. Install
 
