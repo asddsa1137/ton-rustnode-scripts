@@ -15,7 +15,7 @@ TONOS_CLI_BUILD_DIR="${SRC_TOP_DIR}/build/tonos-cli"
 BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
-RUST_VERSTION="1.49.0"
+RUST_VERSTION="1.50.0"
 
 sudo apt update && sudo apt install -y \
     gpg \
@@ -40,7 +40,7 @@ fi
 
 if [ "${INSTALLED_RUST_VERSION}" !=  "${RUST_VERSTION}" ]; then
   cp $SCRIPT_DIR/rust_install.sh $TMP_DIR
-  cd $TMP_DIR && sudo ./rust_install.sh 1.49.0
+  cd $TMP_DIR && sudo ./rust_install.sh "${RUST_VERSTION}"
 fi
 
 rm -rf "${NODE_BUILD_DIR}"
