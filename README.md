@@ -15,7 +15,7 @@ git clone https://github.com/tonlabs/rustnet.ton.dev.git
 ## 1. Initialize environment. 
 
 ```
-. ./env.sh
+. ./rustnet.ton.dev/scripts/env.sh
 ```
 
 ## 2. Clone this repo
@@ -40,6 +40,7 @@ cd ../rustnet.ton.dev/scripts/
 ```
 ./setup.sh
 ```
+*In case on network wipe just re-run setup script.* 
 
 ## 6. Install
 
