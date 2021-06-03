@@ -15,7 +15,8 @@ TONOS_CLI_BUILD_DIR="${SRC_TOP_DIR}/build/tonos-cli"
 BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
-RUST_VERSTION="1.50.0"
+export RUSTFLAGS="-C target-cpu=native"
+RUST_VERSTION="1.52.1"
 
 sudo apt update && sudo apt install -y \
     gpg \
