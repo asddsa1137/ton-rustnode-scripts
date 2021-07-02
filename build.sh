@@ -11,12 +11,13 @@ mkdir -p "${TMP_DIR}"
 NODE_BUILD_DIR="${SRC_TOP_DIR}/build"
 TOOLS_BUILD_DIR="${SRC_TOP_DIR}/build/ton-labs-node-tools"
 TONOS_CLI_BUILD_DIR="${SRC_TOP_DIR}/build/tonos-cli"
+COMPRESSION="true"
 
 BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
 export RUSTFLAGS="-C target-cpu=native"
-RUST_VERSTION="1.52.1"
+RUST_VERSTION="1.53.0"
 
 sudo apt update && sudo apt install -y \
     gpg \
@@ -32,7 +33,8 @@ sudo apt update && sudo apt install -y \
     git \
     curl \
     gnupg2 \
-    librdkafka-dev
+    librdkafka-dev \
+    libzstd-dev
 
 if command -v rustc &> /dev/null ; then
   INSTALLED_RUST_VERSION=$(rustc --version |awk '{print $2}')
@@ -56,7 +58,12 @@ cd "${NODE_BUILD_DIR}" && git clone --recursive "${TON_NODE_GITHUB_REPO}" ton-no
 cd "${NODE_BUILD_DIR}/ton-node" && git checkout "${TON_NODE_GITHUB_COMMIT_ID}"
 
 cargo update
-cargo build --release
+if [ "${COMPRESSION}" = "true" ]; then
+    export ZSTD_LIB_DIR="/usr/lib/x86_64-linux-gnu"
+    cargo build --release --features "compression"
+else
+    cargo build
+fi
 
 if [ -f "${NODE_BUILD_DIR}/ton-node/target/release/ton_node" ]; then
     mv "${BIN_DIR}/ton_node" "${TMP_DIR}/" &> /dev/null || true
