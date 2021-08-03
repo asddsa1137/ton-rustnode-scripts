@@ -21,6 +21,8 @@ export TON_NODE_TOOLS_GITHUB_REPO="https://github.com/tonlabs/ton-labs-node-tool
 export TON_NODE_TOOLS_GITHUB_COMMIT_ID="master"
 export TONOS_CLI_GITHUB_REPO="https://github.com/tonlabs/tonos-cli.git"
 export TONOS_CLI_GITHUB_COMMIT_ID="master"
+export TVM_LINKER_REPO="https://github.com/tonlabs/TVM-linker.git"
+export TVM_LINKER_COMMIT_ID="master"
 export DEPOOL_ENABLE="yes"
 
 

@@ -57,6 +57,11 @@ echo "${NODE_BUILD_DIR}"
 cd "${NODE_BUILD_DIR}" && git clone --recursive "${TON_NODE_GITHUB_REPO}" ton-node
 cd "${NODE_BUILD_DIR}/ton-node" && git checkout "${TON_NODE_GITHUB_COMMIT_ID}"
 
+# patch node with black magic
+sed -i '0,/Ok(Stats {stats: stats})/s/Ok(Stats {stats: stats})/PLACEHOLDER\n            Ok(Stats {stats: stats})/' "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
+sed -i "/PLACEHOLDER/r $SCRIPT_DIR/patch_control.rs" "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
+sed -i "/PLACEHOLDER/d" "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
+
 cargo update
 if [ "${COMPRESSION}" = "true" ]; then
     export ZSTD_LIB_DIR="/usr/lib/x86_64-linux-gnu"
@@ -87,6 +92,17 @@ fi
 if [ -f "${NODE_BUILD_DIR}/ton-labs-node-tools/target/release/keygen" ]; then
     mv "${TOOLS_DIR}/keygen" "${TMP_DIR}/" &> /dev/null || true
     cp "${NODE_BUILD_DIR}/ton-labs-node-tools/target/release/keygen" "${TOOLS_DIR}/"
+fi
+
+cd "${NODE_BUILD_DIR}/" && git clone --recursive "${TVM_LINKER_REPO}"
+cd "${NODE_BUILD_DIR}/TVM-linker/tvm_linker" && git checkout "${TVM_LINKER_COMMIT_ID}"
+
+cargo update
+cargo build --release
+
+if [ -f "${NODE_BUILD_DIR}/TVM-linker/tvm_linker/target/release/tvm_linker" ]; then
+    mv "${TOOLS_DIR}/tvm_linker" "${TMP_DIR}/" &> /dev/null || true
+    cp "${NODE_BUILD_DIR}/TVM-linker/tvm_linker/target/release/tvm_linker" "${TOOLS_DIR}/"
 fi
 
 echo "INFO: build utils (ton-labs-node-tools)... DONE"
