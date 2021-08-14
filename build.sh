@@ -17,7 +17,7 @@ BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
 export RUSTFLAGS="-C target-cpu=native"
-RUST_VERSTION="1.53.0"
+RUST_VERSTION="1.54.0"
 
 sudo apt update && sudo apt install -y \
     gpg \
@@ -58,7 +58,7 @@ cd "${NODE_BUILD_DIR}" && git clone --recursive "${TON_NODE_GITHUB_REPO}" ton-no
 cd "${NODE_BUILD_DIR}/ton-node" && git checkout "${TON_NODE_GITHUB_COMMIT_ID}"
 
 # patch node with black magic
-sed -i '0,/Ok(Stats {stats: stats})/s/Ok(Stats {stats: stats})/PLACEHOLDER\n            Ok(Stats {stats: stats})/' "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
+sed -i '0,/Ok(Stats {stats})/s/Ok(Stats {stats})/PLACEHOLDER\n            Ok(Stats {stats})/' "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
 sed -i "/PLACEHOLDER/r $SCRIPT_DIR/patch_control.rs" "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
 sed -i "/PLACEHOLDER/d" "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
 
@@ -81,6 +81,9 @@ echo "INFO: build utils (ton-labs-node-tools)..."
 
 cd "${NODE_BUILD_DIR}/" && git clone --recursive "${TON_NODE_TOOLS_GITHUB_REPO}"
 cd "${NODE_BUILD_DIR}/ton-labs-node-tools" && git checkout "${TON_NODE_TOOLS_GITHUB_COMMIT_ID}"
+
+# Fix for rust 1.54
+sed -i 's/shell-words = ""/shell-words = "1.0.0"/' "${NODE_BUILD_DIR}/ton-labs-node-tools/Cargo.toml"
 
 cargo update
 cargo build --release
