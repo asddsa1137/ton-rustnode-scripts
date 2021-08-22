@@ -121,7 +121,7 @@ fi
 echo "INFO: ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT = ${ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT}"
 
 ACTIVE_ELECTION_ID_TIME_DIFF=$(($ACTIVE_ELECTION_ID - $ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT))
-if [ $ACTIVE_ELECTION_ID_TIME_DIFF -lt 1000 ] || [ -f "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc" ]; then
+if [ -f "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc" ]; then
     if [ $ACTIVE_ELECTION_ID_TIME_DIFF -gt 1000 ]; then
 	    echo "WARN: We already sent ticktock but events shows an old electionId. DApp is out of sync! Take electionId from status."
             ACTIVE_ELECTION_ID_FROM_DEPOOL_EVENT="${ACTIVE_ELECTION_ID}"
