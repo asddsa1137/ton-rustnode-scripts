@@ -4,7 +4,7 @@ This scripts allow to build and run Free TON Rust node on baremetal host and off
 
 Tested on Ubuntu 20.04
 
-## Warning. Follow instruction, do NOT use validator_depool_v2.sh. It is EXPEREMENTAL, undocumented and does not claim to be able to work.
+## Warning. Follow Getting Started guide, do NOT use validator_depool_v2.sh. It is EXPEREMENTAL, undocumented and does not claim to be able to work.
 
 # Getting Started
 
