@@ -168,6 +168,14 @@ else
 
         echo "INFO: try to ticktock"
         set -x
+	if ! "${UTILS_DIR}/tonos-cli" call "${HELPER_ADDR}" sendTicktock \
+		"{}" \
+		--abi "${CONTRACTS_DIR}/depool/DePoolHelper.abi.json" \
+		--sign "${KEYS_DIR}/helper.json"; then
+		echo "INFO: tonos-cli submitTransaction attempt #${i}... FAIL"
+	else
+		echo "INFO: tonos-cli submitTransaction attempt #${i}... PASS"
+	fi
         if ! [[ -n $("${UTILS_DIR}/console" -C "${TON_WORK_DIR}/configs/console.json" --cmd "sendmessage ${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc" | grep -i 'success') ]]; then
             echo "FATAL: rconsole sendmessage Ticktock attempt FAIL"
 	    rm -f "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc"
@@ -240,6 +248,18 @@ if [[ -z $(echo $TVM_OUTPUT | grep "boc file created") ]]; then
     exit 1
 fi
 mv -f "$(echo "${MSIG_ADDR}"| cut -c 1-8)-msg-body.boc" "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-msg-body.boc"
+
+VALIDATOR_QUERY_BOC=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-msg-body.boc")
+
+echo "INFO: tonos-cli submitTransaction attempt #${i}..."
+if ! "${UTILS_DIR}/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
+	 "{\"dest\":\"${DEPOOL_ADDR}\",\"value\":\"1000000000\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${VALIDATOR_QUERY_BOC}\"}" \
+	 --abi "${CONFIGS_DIR}/SafeMultisigWallet.abi.json" \
+	 --sign "${KEYS_DIR}/msig.keys.json"; then
+	echo "INFO: tonos-cli submitTransaction attempt #${i}... FAIL"
+else
+	echo "INFO: tonos-cli submitTransaction attempt #${i}... PASS"
+fi
 
 echo "INFO: rconsole submitTransaction attempt #${i}..."
 set -x
