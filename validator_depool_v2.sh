@@ -23,7 +23,7 @@ KEYS_DIR="${CONFIGS_DIR}/keys"
 WORK_DIR="${UTILS_DIR}"
 
 MAX_FACTOR=${MAX_FACTOR:-3}
-TONOS_CLI_SEND_ATTEMPTS="3"
+TONOS_CLI_SEND_ATTEMPTS="2"
 ELECTOR_ADDR="-1:3333333333333333333333333333333333333333333333333333333333333333"
 MSIG_ADDR_FILE="${KEYS_DIR}/${VALIDATOR_NAME}.addr"
 DEPOOL_ADDR_FILE="${KEYS_DIR}/depool.addr"
@@ -168,6 +168,13 @@ else
 
         echo "INFO: try to ticktock"
         set -x
+        if ! [[ -n $("${UTILS_DIR}/console" -C "${TON_WORK_DIR}/configs/console.json" --cmd "sendmessage ${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc" | grep -i 'success') ]]; then
+            echo "FATAL: rconsole sendmessage Ticktock attempt FAIL"
+	    rm -f "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc"
+	    exit 1
+        else
+            echo "INFO: rconsole sendmessage Ticktock attempt PASS"
+        fi
 	if ! "${UTILS_DIR}/tonos-cli" call "${HELPER_ADDR}" sendTicktock \
 		"{}" \
 		--abi "${CONTRACTS_DIR}/depool/DePoolHelper.abi.json" \
@@ -176,13 +183,6 @@ else
 	else
 		echo "INFO: tonos-cli submitTransaction attempt #${i}... PASS"
 	fi
-        if ! [[ -n $("${UTILS_DIR}/console" -C "${TON_WORK_DIR}/configs/console.json" --cmd "sendmessage ${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc" | grep -i 'success') ]]; then
-            echo "FATAL: rconsole sendmessage Ticktock attempt FAIL"
-	    rm -f "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc"
-	    exit 1
-        else
-            echo "INFO: rconsole sendmessage Ticktock attempt PASS"
-        fi
         set +x
     fi
     exit 0
@@ -251,6 +251,16 @@ mv -f "$(echo "${MSIG_ADDR}"| cut -c 1-8)-msg-body.boc" "${ELECTIONS_WORK_DIR}/$
 
 VALIDATOR_QUERY_BOC=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-msg-body.boc")
 
+echo "INFO: rconsole submitTransaction attempt #${i}..."
+set -x
+if ! [[ -n $("${UTILS_DIR}/console" -C "${TON_WORK_DIR}/configs/console.json" --cmd "sendmessage ${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-msg-body.boc" | grep -i 'success') ]]; then
+    echo "INFO: rconsole submitTransaction attempt FAIL"
+    exit 1
+else
+    echo "INFO: rconsole submitTransaction attempt PASS"
+fi
+set +x
+
 for i in $(seq ${TONOS_CLI_SEND_ATTEMPTS}); do
 	echo "INFO: tonos-cli submitTransaction attempt #${i}..."
 	if ! "${UTILS_DIR}/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
@@ -263,16 +273,6 @@ for i in $(seq ${TONOS_CLI_SEND_ATTEMPTS}); do
 		break
 	fi
 done
-
-echo "INFO: rconsole submitTransaction attempt #${i}..."
-set -x
-if ! [[ -n $("${UTILS_DIR}/console" -C "${TON_WORK_DIR}/configs/console.json" --cmd "sendmessage ${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-msg-body.boc" | grep -i 'success') ]]; then
-    echo "INFO: rconsole submitTransaction attempt FAIL"
-    exit 1
-else
-    echo "INFO: rconsole submitTransaction attempt PASS"
-fi
-set +x
 
 date +"INFO: %F %T prepared for elections"
 echo "${ACTIVE_ELECTION_ID}" >"${ELECTIONS_WORK_DIR}/active-election-id-submitted"
