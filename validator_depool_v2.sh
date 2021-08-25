@@ -23,7 +23,7 @@ KEYS_DIR="${CONFIGS_DIR}/keys"
 WORK_DIR="${UTILS_DIR}"
 
 MAX_FACTOR=${MAX_FACTOR:-3}
-TONOS_CLI_SEND_ATTEMPTS="10"
+TONOS_CLI_SEND_ATTEMPTS="3"
 ELECTOR_ADDR="-1:3333333333333333333333333333333333333333333333333333333333333333"
 MSIG_ADDR_FILE="${KEYS_DIR}/${VALIDATOR_NAME}.addr"
 DEPOOL_ADDR_FILE="${KEYS_DIR}/depool.addr"
@@ -251,15 +251,18 @@ mv -f "$(echo "${MSIG_ADDR}"| cut -c 1-8)-msg-body.boc" "${ELECTIONS_WORK_DIR}/$
 
 VALIDATOR_QUERY_BOC=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-msg-body.boc")
 
-echo "INFO: tonos-cli submitTransaction attempt #${i}..."
-if ! "${UTILS_DIR}/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
-	 "{\"dest\":\"${DEPOOL_ADDR}\",\"value\":\"1000000000\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${VALIDATOR_QUERY_BOC}\"}" \
-	 --abi "${CONFIGS_DIR}/SafeMultisigWallet.abi.json" \
-	 --sign "${KEYS_DIR}/msig.keys.json"; then
-	echo "INFO: tonos-cli submitTransaction attempt #${i}... FAIL"
-else
-	echo "INFO: tonos-cli submitTransaction attempt #${i}... PASS"
-fi
+for i in $(seq ${TONOS_CLI_SEND_ATTEMPTS}); do
+	echo "INFO: tonos-cli submitTransaction attempt #${i}..."
+	if ! "${UTILS_DIR}/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
+		 "{\"dest\":\"${DEPOOL_ADDR}\",\"value\":\"1000000000\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${VALIDATOR_QUERY_BOC}\"}" \
+		 --abi "${CONFIGS_DIR}/SafeMultisigWallet.abi.json" \
+		 --sign "${KEYS_DIR}/msig.keys.json"; then
+		echo "INFO: tonos-cli submitTransaction attempt #${i}... FAIL"
+	else
+		echo "INFO: tonos-cli submitTransaction attempt #${i}... PASS"
+		break
+	fi
+done
 
 echo "INFO: rconsole submitTransaction attempt #${i}..."
 set -x
