@@ -67,14 +67,19 @@ ELECTIONS_START_BEFORE=$(${SCRIPT_DIR}/check_node_sync_status.sh |grep elections
 STAKE_HELD_FOR=$(${SCRIPT_DIR}/check_node_sync_status.sh |grep stake_held_for |awk '{print $2}' |sed 's/,//g')
 VALIDATORS_ELECTED_FOR=$(${SCRIPT_DIR}/check_node_sync_status.sh |grep validators_elected_for |awk '{print $2}' |sed 's/,//g')
 
-ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli run ${ELECTOR_ADDR} active_election_id {} --abi ${CONFIGS_DIR}/Elector.abi.json 2>&1 | grep "value0" | awk '{print $2}' | tr -d '"') || true
+#ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli run ${ELECTOR_ADDR} active_election_id {} --abi ${CONFIGS_DIR}/Elector.abi.json 2>&1 | grep "value0" | awk '{print $2}' | tr -d '"') || true
+#if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
+#    echo "WARN: tonos-cli is feeling bad. Taking election id from status"
+#    ACTIVE_ELECTION_ID_HEX=$(${SCRIPT_DIR}/check_node_sync_status.sh |grep utime_until |awk '{print $2}' |sed 's/,//g')
+#    if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
+#        echo "ERROR: failed to get active elections ID"
+#        exit 1
+#    fi
+#fi
+ACTIVE_ELECTION_ID_HEX=$(${SCRIPT_DIR}/check_node_sync_status.sh |grep utime_until |awk '{print $2}' |sed 's/,//g')
 if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
-    echo "WARN: tonos-cli is feeling bad. Taking election id from status"
-    ACTIVE_ELECTION_ID_HEX=$(${SCRIPT_DIR}/check_node_sync_status.sh |grep utime_until |awk '{print $2}' |sed 's/,//g')
-    if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
-        echo "ERROR: failed to get active elections ID"
-        exit 1
-    fi
+    echo "ERROR: failed to get active elections ID"
+    exit 1
 fi
 ACTIVE_ELECTION_ID=$(printf "%d" "${ACTIVE_ELECTION_ID_HEX}")
 echo "INFO: ACTIVE_ELECTION_ID = ${ACTIVE_ELECTION_ID}"
