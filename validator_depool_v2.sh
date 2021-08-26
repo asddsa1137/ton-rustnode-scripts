@@ -133,7 +133,9 @@ if [ -f "${ELECTIONS_WORK_DIR}/${ACTIVE_ELECTION_ID}-tick-body.boc" ]; then
     fi
     PROXY_ADDR_FROM_DEPOOL_EVENT=$(grep "^{" "${ELECTIONS_WORK_DIR}/events.txt" | grep electionId |
         jq ".proxy" | head -1 | tr -d '"')
-    if [ -z "${PROXY_ADDR_FROM_DEPOOL_EVENT}" ]; then
+    ELECTION_ID_FROM_DEPOOL_EVENT=$(grep "^{" "${ELECTIONS_WORK_DIR}/events.txt" | grep electionId |
+	jq ".electionId" | head -1 | tr -d '"')
+    if [ "${ELECTION_ID_FROM_DEPOOL_EVENT}" -ne "${ACTIVE_ELECTION_ID}" ]; then
 	echo "WARN: tonos-cli is feeling bad. Try to figure out required proxy address based on previous elections."
 	# Get proxy used in previous elections and take other one
 	POSSIBLE_PROXY="$(cat ${KEYS_DIR}/elections/$((${ACTIVE_ELECTION_ID}-${VALIDATORS_ELECTED_FOR}))/proxy.addr)"
