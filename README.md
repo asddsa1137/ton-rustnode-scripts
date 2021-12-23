@@ -8,10 +8,10 @@ Tested on Ubuntu 20.04
 
 # Getting Started
 
-## 0. Clone TON Labs rustnet repo
+## 0. Clone TON Labs network repo and change branch to mainnet.
 
 ```
-git clone https://github.com/tonlabs/rustnet.ton.dev.git
+git clone https://github.com/tonlabs/rustnet.ton.dev.git && cd rustnet.ton.dev && git checkout mainnet && cd ..
 ```
 
 ## 1. Initialize environment. 
