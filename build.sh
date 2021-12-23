@@ -17,7 +17,7 @@ BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
 export RUSTFLAGS="-C target-cpu=native"
-RUST_VERSTION="1.54.0"
+RUST_VERSTION="1.56.1"
 
 sudo apt update && sudo apt install -y \
     gpg \
@@ -34,7 +34,8 @@ sudo apt update && sudo apt install -y \
     curl \
     gnupg2 \
     librdkafka-dev \
-    libzstd-dev
+    libzstd-dev \
+    libgoogle-perftools-dev
 
 if command -v rustc &> /dev/null ; then
   INSTALLED_RUST_VERSION=$(rustc --version |awk '{print $2}')
@@ -57,17 +58,16 @@ echo "${NODE_BUILD_DIR}"
 cd "${NODE_BUILD_DIR}" && git clone --recursive "${TON_NODE_GITHUB_REPO}" ton-node
 cd "${NODE_BUILD_DIR}/ton-node" && git checkout "${TON_NODE_GITHUB_COMMIT_ID}"
 
-# patch node with black magic
-sed -i '0,/Ok(Stats {stats})/s/Ok(Stats {stats})/PLACEHOLDER\n            Ok(Stats {stats})/' "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
-sed -i "/PLACEHOLDER/r $SCRIPT_DIR/patch_control.rs" "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
-sed -i "/PLACEHOLDER/d" "${NODE_BUILD_DIR}/ton-node/src/network/control.rs"
+sed -i -e '/^\[dependencies\]/p; s/\[dependencies\]/ed25519-dalek = "1.0"/' "${NODE_BUILD_DIR}/ton-labs-node/" Cargo.toml
+sed -i -e 's%features = \[\"cmake_build\", \"dynamic_linking\"\]%features = \[\"cmake_build\"\]%g' "${NODE_BUILD_DIR}/ton-labs-node/" Cargo.toml
+sed -i -e '/^\[features\]/p; s/\[features\]/sha2-native = ["sha2\/asm", "ed25519-dalek\/asm"]/' "${NODE_BUILD_DIR}/ton-labs-node/" Cargo.toml
 
+export ZSTD_LIB_DIR="/usr/lib/x86_64-linux-gnu"
 cargo update
 if [ "${COMPRESSION}" = "true" ]; then
-    export ZSTD_LIB_DIR="/usr/lib/x86_64-linux-gnu"
-    cargo build --release --features "compression"
+    cargo build --release --features "compression,sha2-native"
 else
-    cargo build
+    cargo build --release --features "sha2-native"
 fi
 
 if [ -f "${NODE_BUILD_DIR}/ton-node/target/release/ton_node" ]; then
