@@ -11,7 +11,7 @@ mkdir -p "${TMP_DIR}"
 NODE_BUILD_DIR="${SRC_TOP_DIR}/build"
 TOOLS_BUILD_DIR="${SRC_TOP_DIR}/build/ton-labs-node-tools"
 TONOS_CLI_BUILD_DIR="${SRC_TOP_DIR}/build/tonos-cli"
-COMPRESSION="true"
+COMPRESSION="false"
 
 BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
@@ -58,9 +58,9 @@ echo "${NODE_BUILD_DIR}"
 cd "${NODE_BUILD_DIR}" && git clone --recursive "${TON_NODE_GITHUB_REPO}" ton-node
 cd "${NODE_BUILD_DIR}/ton-node" && git checkout "${TON_NODE_GITHUB_COMMIT_ID}"
 
-sed -i -e '/^\[dependencies\]/p; s/\[dependencies\]/ed25519-dalek = "1.0"/' "${NODE_BUILD_DIR}/ton-labs-node/" Cargo.toml
-sed -i -e 's%features = \[\"cmake_build\", \"dynamic_linking\"\]%features = \[\"cmake_build\"\]%g' "${NODE_BUILD_DIR}/ton-labs-node/" Cargo.toml
-sed -i -e '/^\[features\]/p; s/\[features\]/sha2-native = ["sha2\/asm", "ed25519-dalek\/asm"]/' "${NODE_BUILD_DIR}/ton-labs-node/" Cargo.toml
+sed -i -e '/^\[dependencies\]/p; s/\[dependencies\]/ed25519-dalek = "1.0"/' "${NODE_BUILD_DIR}/ton-labs-node/Cargo.toml"
+sed -i -e 's%features = \[\"cmake_build\", \"dynamic_linking\"\]%features = \[\"cmake_build\"\]%g' "${NODE_BUILD_DIR}/ton-labs-node/Cargo.toml"
+sed -i -e '/^\[features\]/p; s/\[features\]/sha2-native = ["sha2\/asm", "ed25519-dalek\/asm"]/' "${NODE_BUILD_DIR}/ton-labs-node/Cargo.toml"
 
 export ZSTD_LIB_DIR="/usr/lib/x86_64-linux-gnu"
 cargo update

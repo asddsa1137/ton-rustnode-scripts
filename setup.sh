@@ -89,6 +89,6 @@ jq ".client_key = $(jq .private "${TON_WORK_DIR}/configs/${HOSTNAME}_console_cli
 jq ".config = $(cat "${TMP_DIR}/console_config.json.tmp")" "${TON_WORK_DIR}/configs/console_template.json" > "${TON_WORK_DIR}/configs/console.json"
 rm -f "${TON_WORK_DIR}/configs/console_config.json"
 
-curl -sS "https://raw.githubusercontent.com/tonlabs/main.ton.dev/main/configs/ton-global.config.json" -o "${TON_WORK_DIR}/configs/ton-global.config.json"
+curl -sS "https://raw.githubusercontent.com/tonlabs/main.ton.dev/master/configs/ton-global.config.json" -o "${TON_WORK_DIR}/configs/ton-global.config.json"
 
 rm -rf "${TMP_DIR}"
