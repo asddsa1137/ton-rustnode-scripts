@@ -48,7 +48,19 @@ fi
 echo "INFO: MSIG_ADDR = ${MSIG_ADDR}"
 echo "INFO: DEPOOL_ADDR = ${DEPOOL_ADDR}"
 
-ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli run ${ELECTOR_ADDR} active_election_id {} --abi ${CONFIGS_DIR}/Elector.abi.json 2>&1 | grep "value0" | awk '{print $2}' | tr -d '"')
+case "${ELECTOR_TYPE}" in
+	"fift")
+		ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli runget ${ELECTOR_ADDR} active_election_id 2>&1 | awk -F'"' '/Result:/ {print $2}')
+	        ;;
+	"solidity")
+	        ACTIVE_ELECTION_ID_HEX=$(${UTILS_DIR}/tonos-cli run ${ELECTOR_ADDR} active_election_id {} --abi ${CONFIGS_DIR}/Elector.abi.json 2>&1 | grep "value0" | awk '{print $2}' | tr -d '"')
+		;;
+	*)
+		echo "ERROR: unknown ELECTOR_TYPE"
+		exit 1
+		;;
+esac
+
 if [ -z "${ACTIVE_ELECTION_ID_HEX}" ]; then
    	echo "ERROR: failed to get active elections ID"
         exit 1

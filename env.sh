@@ -24,6 +24,7 @@ export TONOS_CLI_GITHUB_COMMIT_ID="master"
 export TVM_LINKER_REPO="https://github.com/tonlabs/TVM-linker.git"
 export TVM_LINKER_COMMIT_ID="master"
 export DEPOOL_ENABLE="yes"
+export ELECTOR_TYPE="fift"
 
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
