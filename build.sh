@@ -17,7 +17,7 @@ BIN_DIR="${SRC_TOP_DIR}/bin"
 TOOLS_DIR="${SRC_TOP_DIR}/tools"
 
 export RUSTFLAGS="-C target-cpu=native"
-RUST_VERSTION="1.58.1"
+RUST_VERSTION="1.60.0"
 
 sudo apt update && sudo apt install -y \
     gpg \
@@ -64,11 +64,7 @@ sed -i -e '/^\[features\]/p; s/\[features\]/sha2-native = ["sha2\/asm", "ed25519
 
 export ZSTD_LIB_DIR="/usr/lib/x86_64-linux-gnu"
 cargo update
-if [ "${COMPRESSION}" = "true" ]; then
-    cargo build --release --features "compression,sha2-native"
-else
-    cargo build --release --features "sha2-native"
-fi
+cargo build --release
 
 if [ -f "${NODE_BUILD_DIR}/ton-node/target/release/ton_node" ]; then
     mv "${BIN_DIR}/ton_node" "${TMP_DIR}/" &> /dev/null || true
@@ -98,14 +94,14 @@ if [ -f "${NODE_BUILD_DIR}/ton-labs-node-tools/target/release/keygen" ]; then
 fi
 
 cd "${NODE_BUILD_DIR}/" && git clone --recursive "${TVM_LINKER_REPO}"
-cd "${NODE_BUILD_DIR}/TVM-linker/tvm_linker" && git checkout "${TVM_LINKER_COMMIT_ID}"
+cd "${NODE_BUILD_DIR}/TVM-linker" && git checkout "${TVM_LINKER_COMMIT_ID}"
 
 cargo update
 cargo build --release
 
-if [ -f "${NODE_BUILD_DIR}/TVM-linker/tvm_linker/target/release/tvm_linker" ]; then
+if [ -f "${NODE_BUILD_DIR}/TVM-linker/target/release/tvm_linker" ]; then
     mv "${TOOLS_DIR}/tvm_linker" "${TMP_DIR}/" &> /dev/null || true
-    cp "${NODE_BUILD_DIR}/TVM-linker/tvm_linker/target/release/tvm_linker" "${TOOLS_DIR}/"
+    cp "${NODE_BUILD_DIR}/TVM-linker/target/release/tvm_linker" "${TOOLS_DIR}/"
 fi
 
 echo "INFO: build utils (ton-labs-node-tools)... DONE"
